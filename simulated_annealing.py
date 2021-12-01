@@ -84,6 +84,7 @@ if __name__ == '__main__':
     axis = figure.gca( projection='3d')
     axis.plot_surface(x, y, results, cmap='jet', shade= "false")
     plt.show()
+    plt.plot([points[i][0] for i in range(len(points))], [points[i][1] for i in range(len(points))], linewidth=1, color='red')
     plt.contour(x,y,results)
     plt.colorbar(plt.imshow(results, cmap=plt.cm.RdBu, extent=[r_min, r_max, r_min, r_max])) # adding the colobar on the right
     plt.show()
