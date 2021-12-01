@@ -98,7 +98,7 @@ class tsp():
             line = line.split(' ')
             self.point_list.append((int(line[0]), int(line[1])))
     
-    def plot_path(self, save_name=None, best=False):
+    def plot_path(self, save_name=None, best=False, show=False):
         if save_name is None: save_name = f'tcp_{self.num_points}_{self.best_distance[-1][0]}.png'
         if best:
             plt.plot(
@@ -120,9 +120,9 @@ class tsp():
                 '.')
         plt.title(f'{self.num_points} Points TCP: SA Algorithm')
         plt.savefig(save_name)          
-        plt.show()
+        if show: plt.show()
     
-    def plot_dis_decay(self, save_name=None):
+    def plot_dis_decay(self, save_name=None, show=False):
         if save_name is None: save_name = f'tcp_{self.num_points}_{self.best_distance[-1][0]}.png'
         x = [self.best_distance[i][1] for i in range(len(self.best_distance))] + [self.n_iterations,]
         y = [self.best_distance[i][0] for i in range(len(self.best_distance))] + [self.best_distance[-1][0],]
@@ -131,17 +131,18 @@ class tsp():
         plt.ylabel('Total Distance')
         plt.title(f'{self.num_points} Points TCP: SA Algorithm')
         plt.savefig(save_name)
-        plt.show()
+        if show: plt.show()
 
 
 
-tsp = tsp(num_points=20)
+tsp = tsp(num_points=20, n_iterations=10000, point_file='tcp_20.txt')
 tsp.save_best_result(filename='tcp_20.txt')
+tsp.plot_path(save_name='tcp_20.png')
 print(tsp.distance)
-tsp.sim_ann(temperature=100)
+tsp.sim_ann(temperature=500000)
 print(tsp.distance)
 print(tsp.best_distance)
 tsp.save_best_result()
-tsp.plot_path()
+tsp.plot_path(best=True)
 tsp.plot_dis_decay()
 
