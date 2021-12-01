@@ -55,7 +55,7 @@ def simulated_annealing(objective, bounds, n_iterations, step_size, temp):
 
 
 if __name__ == '__main__':
-    r_min, r_max = -32.768, 32.768
+    r_min, r_max = -10, 10
     # seed the pseudorandom number generator
     seed(int(time()))
     # define range for input
@@ -76,9 +76,8 @@ if __name__ == '__main__':
     plt.ylabel('Evaluation f(x)')
     plt.show()
 
-    
-    xaxis = arange(r_min, r_max, 2.0)
-    yaxis = arange(r_min, r_max, 2.0)
+    xaxis = arange(r_min, r_max, .01)
+    yaxis = arange(r_min, r_max, .01)
     x, y = meshgrid(xaxis, yaxis)
     results = objective(x, y)
     figure = plt.figure()
@@ -86,6 +85,5 @@ if __name__ == '__main__':
     axis.plot_surface(x, y, results, cmap='jet', shade= "false")
     plt.show()
     plt.contour(x,y,results)
-    plt.show()
-    plt.scatter(x, y, results)
+    plt.colorbar(plt.imshow(results, cmap=plt.cm.RdBu, extent=[r_min, r_max, r_min, r_max])) # adding the colobar on the right
     plt.show()
