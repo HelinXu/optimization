@@ -7,12 +7,13 @@ from numpy import exp
 import matplotlib.pyplot as plt
 import numpy as np
 
+
 def get_distance(p1, p2):
     return sqrt( (p1[0] - p2[0])**2 + (p1[1] - p2[1])**2 )
 
 
 class tsp():
-    def __init__(self, num_points=30, width=1000, point_file=None, n_iterations=1000):
+    def __init__(self, num_points=20, width=1000, point_file=None, n_iterations=10000):
         self.num_points = num_points
         self.width = width
         self.n_iterations = n_iterations
@@ -61,7 +62,7 @@ class tsp():
             pair = random.sample(range(self.num_points), 2)
         return pair
     
-    def sim_ann(self, temperature=1000):
+    def simulated_annealing(self, temperature=500000):
         for i in range(self.n_iterations):
             # take a step: random swap
             candidate_pair = self.rand_pair()
@@ -121,6 +122,7 @@ class tsp():
         plt.title(f'{self.num_points} Points TCP: SA Algorithm')
         plt.savefig(save_name)          
         if show: plt.show()
+        plt.close()
     
     def plot_dis_decay(self, save_name=None, show=False):
         if save_name is None: save_name = f'tcp_{self.num_points}_{self.best_distance[-1][0]}.png'
@@ -132,17 +134,16 @@ class tsp():
         plt.title(f'{self.num_points} Points TCP: SA Algorithm')
         plt.savefig(save_name)
         if show: plt.show()
+        plt.close()
 
-
-
-tsp = tsp(num_points=20, n_iterations=10000, point_file='tcp_20.txt')
-tsp.save_best_result(filename='tcp_20.txt')
-tsp.plot_path(save_name='tcp_20.png')
-print(tsp.distance)
-tsp.sim_ann(temperature=500000)
-print(tsp.distance)
-print(tsp.best_distance)
-tsp.save_best_result()
-tsp.plot_path(best=True)
-tsp.plot_dis_decay()
-
+if __name__ == '__main__':
+    tsp = tsp(num_points=20, n_iterations=10000, point_file='tcp_20.txt')
+    tsp.save_best_result(filename='tcp_20.txt')
+    tsp.plot_path(save_name='tcp_20.png')
+    print(tsp.distance)
+    tsp.simulated_annealing(temperature=500000)
+    print(tsp.distance)
+    print(tsp.best_distance)
+    tsp.save_best_result()
+    tsp.plot_path(best=True)
+    tsp.plot_dis_decay()
