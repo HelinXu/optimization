@@ -2,17 +2,20 @@ import random
 from copy import deepcopy
 from time import time
 from math import sqrt
-from numpy.random import rand, randn
+from numpy.random import f, rand, randn
 from numpy import exp
+import matplotlib.pyplot as plt
+import numpy as np
 
 def get_distance(p1, p2):
     return sqrt( (p1[0] - p2[0])**2 + (p1[1] - p2[1])**2 )
 
 
 class tsp():
-    def __init__(self, num_points=30, width=1000, point_file=None):
+    def __init__(self, num_points=30, width=1000, point_file=None, n_iterations=1000):
         self.num_points = num_points
         self.width = width
+        self.n_iterations = n_iterations
         self.point_list = []
         if point_file == None:
             random.seed(int(time()))
@@ -58,8 +61,8 @@ class tsp():
             pair = random.sample(range(self.num_points), 2)
         return pair
     
-    def sim_ann(self, n_iterations=10000, temperature=1000):
-        for i in range(n_iterations):
+    def sim_ann(self, temperature=1000):
+        for i in range(self.n_iterations):
             # take a step: random swap
             candidate_pair = self.rand_pair()
             # evaluate candidate
@@ -83,7 +86,7 @@ class tsp():
             assert abs(self.distance - self.total_distance()) < 1e-7, f'iter {i}:swap{candidate_pair[0]},{candidate_pair[1]} {self.distance} != {self.total_distance()}'
 
     def save_best_result(self, filename=None):
-        if filename is None: filename = f'tcp_{self.num_points}.txt'
+        if filename is None: filename = f'tcp_{self.num_points}_{self.best_distance[-1][0]}.txt'
         f = open(filename, 'w')
         for point in self.best_point_list[-1]:
             f.write(f'{point[0]} {point[1]}\n')
@@ -94,12 +97,51 @@ class tsp():
         for line in f.readlines():
             line = line.split(' ')
             self.point_list.append((int(line[0]), int(line[1])))
+    
+    def plot_path(self, save_name=None, best=False):
+        if save_name is None: save_name = f'tcp_{self.num_points}_{self.best_distance[-1][0]}.png'
+        if best:
+            plt.plot(
+                [self.best_point_list[-1][i][0] for i in range(self.num_points)] + [self.best_point_list[-1][0][0]],
+                [self.best_point_list[-1][i][1] for i in range(self.num_points)] + [self.best_point_list[-1][0][1]],
+                linewidth=1, color='red')
+            plt.plot(
+                [self.best_point_list[-1][i][0] for i in range(self.num_points)],
+                [self.best_point_list[-1][i][1] for i in range(self.num_points)],
+                '.')
+        else:
+            plt.plot(
+                [self.point_list[i][0] for i in range(self.num_points)] + [self.point_list[0][0]],
+                [self.point_list[i][1] for i in range(self.num_points)] + [self.point_list[0][1]],
+                linewidth=1, color='red')
+            plt.plot(
+                [self.point_list[i][0] for i in range(self.num_points)],
+                [self.point_list[i][1] for i in range(self.num_points)],
+                '.')
+        plt.title(f'{self.num_points} Points TCP: SA Algorithm')
+        plt.savefig(save_name)          
+        plt.show()
+    
+    def plot_dis_decay(self, save_name=None):
+        if save_name is None: save_name = f'tcp_{self.num_points}_{self.best_distance[-1][0]}.png'
+        x = [self.best_distance[i][1] for i in range(len(self.best_distance))] + [self.n_iterations,]
+        y = [self.best_distance[i][0] for i in range(len(self.best_distance))] + [self.best_distance[-1][0],]
+        plt.step(x, y, where='post')
+        plt.xlabel('Iterations')
+        plt.ylabel('Total Distance')
+        plt.title(f'{self.num_points} Points TCP: SA Algorithm')
+        plt.savefig(save_name)
+        plt.show()
 
 
-tsp = tsp(num_points=60, point_file='tcp_60.txt')
+
+tsp = tsp(num_points=20)
+tsp.save_best_result(filename='tcp_20.txt')
 print(tsp.distance)
-tsp.sim_ann(temperature=1000000, n_iterations=1000000)
+tsp.sim_ann(temperature=100)
 print(tsp.distance)
 print(tsp.best_distance)
 tsp.save_best_result()
+tsp.plot_path()
+tsp.plot_dis_decay()
 
