@@ -2,7 +2,7 @@
 
 Instructor: Ling Wang
 
-Helin Xu (xhl19@mails.tsinghua.edu.cn)
+Author: Helin Xu (xhl19@mails.tsinghua.edu.cn)
 
 ## PA 1
 
