@@ -34,11 +34,11 @@ class tsp():
             dis += get_distance(self.point_list[i], self.point_list[i+1])
         return dis
 
-    def swap(self, i, j, delta_distance):
+    def swap(self, i, j):
         tmp = self.point_list[i]
         self.point_list[i] = self.point_list[j]
         self.point_list[j] = tmp
-        self.distance += delta_distance
+        self.distance = self.total_distance()
 
     def delta_distance(self, i, j):
         d = 0
@@ -68,7 +68,7 @@ class tsp():
             candidate_pair = self.rand_pair()
             # evaluate candidate
             candidate_del_dis = self.delta_distance(candidate_pair[0], candidate_pair[1])
-            self.swap(candidate_pair[0], candidate_pair[1], candidate_del_dis)
+            self.swap(candidate_pair[0], candidate_pair[1])
             # check for new best solution
             if self.best_distance[-1][0] > self.distance:
                 # update and record scores
@@ -83,8 +83,8 @@ class tsp():
             if candidate_del_dis < 0 or rand() < metropolis: # by chance of metropolis, accept worse solution
                 pass # accept new solution
             else: # undo
-                self.swap(candidate_pair[0], candidate_pair[1], -candidate_del_dis)  
-            assert abs(self.distance - self.total_distance()) < 1e-7, f'iter {i}:swap{candidate_pair[0]},{candidate_pair[1]} {self.distance} != {self.total_distance()}'
+                self.swap(candidate_pair[0], candidate_pair[1])  
+            # assert abs(self.distance - self.total_distance()) < 1e-7, f'iter {i}:swap{candidate_pair[0]},{candidate_pair[1]} {self.distance} != {self.total_distance()}'
 
     def save_best_result(self, filename=None):
         if filename is None: filename = f'tcp_{self.num_points}_{self.best_distance[-1][0]}.txt'
